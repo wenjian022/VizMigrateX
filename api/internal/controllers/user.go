@@ -70,6 +70,21 @@ func (userController *UserController) UserLogoutPost(ctx *gin.Context) {
 	ctx.JSON(response.ReturnStatus{}.Success("ok"))
 }
 
+// UserInitializationGet
+//
+//	@Description: 查看是否需要用户初始化
+//	@receiver userController
+func (userController *UserController) UserInitializationGet(ctx *gin.Context) {
+	ok, err := userService.UserInitializationQuery()
+	if err != nil {
+		Logger.Logger.Errorln(err.Error())
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success(ok))
+}
+
 // UserInitializationPost
 //
 //	@Description: 初始化用户

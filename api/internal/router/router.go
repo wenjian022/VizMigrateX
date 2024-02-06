@@ -14,10 +14,13 @@ func Init() {
 	// Global middlewares
 	Router.Use(middlewares.ErrorHandle())
 	Router.Use(middlewares.Cors())
+	Router.Use(middlewares.JWTAuthMiddleware())
+	api := Router.Group("/api")
+	{
+		// public routes, no auth required
+		LoadPublicRoutes(api)
 
-	// public routes, no auth required
-	LoadPublicRoutes(Router)
-
-	// user routes
-	LoadUserRoutes(Router)
+		// user routes
+		LoadUserRoutes(api)
+	}
 }

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/auth/login',
+    url: '/user/auth/login',
     method: 'post',
     data
   })
@@ -18,45 +18,30 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/auth/logout',
+    url: '/user/auth/logout',
     method: 'post'
   })
 }
 
 /**
- * 添加用户
+ * 查看是否需要用户初始化
+ * @returns {*}
+ */
+export function userInitializationGet() {
+  return request({
+    url: '/user/initialization'
+  })
+}
+
+/**
+ * 初始化用户
  * @param data
  * @returns {*}
- * @constructor
  */
-export function usersAddPost(data) {
+export function userInitializationPost(data) {
   return request({
-    url: '/user/add',
-    method: 'POST',
+    url: '/user/initialization',
+    method: 'post',
     data
-  })
-}
-
-/**
- * 查看用户列表
- * @param params
- * @returns {*}
- */
-export function usersGet(params) {
-  return request({
-    url: '/users',
-    params: { params }
-  })
-}
-
-/**
- * 删除用户
- * @param id
- * @returns {*}
- */
-export function usersDle(id) {
-  return request({
-    url: `/user/del/${id}`,
-    method: 'DELETE'
   })
 }

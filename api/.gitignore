@@ -28,3 +28,4 @@ tmp
 logs
 build/*
 assets/.DS_Store
+fcc.db

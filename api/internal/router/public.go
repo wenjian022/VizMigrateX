@@ -8,7 +8,7 @@ import (
 
 var publicController = new(controllers.PublicController)
 
-func LoadPublicRoutes(r *gin.Engine) *gin.RouterGroup {
+func LoadPublicRoutes(r *gin.RouterGroup) *gin.RouterGroup {
 
 	public := r.Group("/public")
 	{

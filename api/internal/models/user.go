@@ -9,4 +9,5 @@ type User struct {
 	Username    string    `json:"username"`      // Username
 	Password    string    `json:"password"`      // Password
 	LastLoginAt time.Time `json:"last_login_at"` // Last login time
+	Role        int       `json:"role"`          // 角色
 }
