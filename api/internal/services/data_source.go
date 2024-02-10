@@ -18,6 +18,7 @@ type DataSourceListQueryStruct struct {
 
 	DataSourceName    string `form:"dataSourceName"`    // 数据源名称
 	ConnectionAddress string `form:"connectionAddress"` // 连接地址
+	DatabaseType      string `form:"databaseType"`      // 数据库类型
 	//Environment       string `form:"environment"`       // 环境
 }
 
@@ -58,6 +59,10 @@ func (thisQuery *DataSourceListQueryStruct) Query() (page.PagingDataResStruct, e
 	//if thisQuery.Environment != "all" && thisQuery.Environment != "" {
 	//	dataSourceDB.Where("environment = ?", thisQuery.Environment)
 	//}
+
+	if thisQuery.DatabaseType != "all" && thisQuery.DatabaseType != "" {
+		dataSourceDB.Where("database_type = ?", thisQuery.DatabaseType)
+	}
 
 	if thisQuery.ConnectionAddress != "" {
 		dataSourceDB.Where("connection_address = ?", thisQuery.ConnectionAddress)
