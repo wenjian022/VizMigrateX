@@ -52,6 +52,28 @@ func (c *DataSourceControllers) DataSourceCreatePost(ctx *gin.Context) {
 	ctx.JSON(response.ReturnStatus{}.Success(gin.H{"rowID": rowID}))
 }
 
+// DataSourceInfoGet
+//
+//	@Description: 获取数据源详情
+//	@receiver c
+//	@param ctx
+func (c *DataSourceControllers) DataSourceInfoGet(ctx *gin.Context) {
+	var uri services.DataSourceUriIDStruct
+	if err := ctx.ShouldBindUri(&uri); err != nil {
+		lg.Logger.Errorln(err.Error())
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	//  查询id是否存在
+	if err := uri.Query(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success(uri.DataSourceModel))
+}
+
 // DataSourcePut
 //
 //	@Description: 修改数据源

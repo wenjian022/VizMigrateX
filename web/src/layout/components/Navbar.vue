@@ -35,7 +35,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import assets from '@/views/assets/index.vue'
+import assets from '@/views/dataSource/index.vue'
 
 export default {
   components: {

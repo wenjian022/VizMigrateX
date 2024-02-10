@@ -12,10 +12,12 @@ import (
 	"time"
 )
 
+type LocalTime time.Time
+
 type BasicModel struct {
-	ID        uint      `json:"id" gorm:"primarykey"`
-	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	ID        uint       `json:"id" gorm:"primarykey"`
+	CreatedAt *LocalTime `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt *LocalTime `json:"updated_at" gorm:"autoUpdateTime"`
 }
 
 var DB *gorm.DB
@@ -67,4 +69,9 @@ func Connect(dataSourceType, address string) {
 		panic(fmt.Sprintf("连接失败，请使用检查您的:%s 地址: %s err: %s", dataSourceType, address, err.Error()))
 	}
 
+}
+
+func (t *LocalTime) MarshalJSON() ([]byte, error) {
+	tTime := time.Time(*t)
+	return []byte(fmt.Sprintf("\"%v\"", tTime.Format("2006-01-02 15:04:05"))), nil
 }

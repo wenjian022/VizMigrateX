@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { assetDatabasesInformationGet } from '@/api/assets'
+import { assetDatabasesInformationGet } from '@/api/dataSource'
 import { dataReplicationTaskPut } from '@/api/dataReplication'
 
 export default {

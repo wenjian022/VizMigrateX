@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { assetsDatabasesSelectGet } from '@/api/assets'
+import { assetsDatabasesSelectGet } from '@/api/dataSource'
 import { dataReplicationTaskPost } from '@/api/dataReplication'
 
 export default {

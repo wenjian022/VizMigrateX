@@ -15,6 +15,8 @@ func LoadDataSourceRoutes(r *gin.RouterGroup) *gin.RouterGroup {
 		dataSource.GET("", dataSourceController.DataSourceListGet)
 		// 创建数据源
 		dataSource.POST("", dataSourceController.DataSourceCreatePost)
+		// 获取数据源详情
+		dataSource.GET("/:dataSourceID", dataSourceController.DataSourceInfoGet)
 		// 修改数据源
 		dataSource.PUT("/:dataSourceID", dataSourceController.DataSourcePut)
 		// 删除数据源

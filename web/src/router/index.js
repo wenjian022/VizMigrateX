@@ -56,14 +56,14 @@ export const constantRoutes = [
   },
 
   {
-    path: '/assets',
+    path: '/dataSource',
     component: Layout,
-    redirect: '/assets/databases',
+    redirect: '/dataSource/manage',
     children: [{
-      path: 'databases',
-      name: 'DatabasesAssets',
-      component: () => import('@/views/assets/index'),
-      meta: { title: '数据库资产', icon: 'dashboard' }
+      path: '/dataSource/manage',
+      name: 'DataSource',
+      component: () => import('@/views/dataSource/index'),
+      meta: { title: '数据源管理', icon: 'dashboard' }
     }]
   },
   {

@@ -50,7 +50,17 @@ type DataSourceTestConnectionJsonStruct struct {
 type DataSourceUriIDStruct struct {
 	DataSourceID uint `uri:"dataSourceID" binding:"required"`
 
-	dataSourceModel models.DataSource
+	DataSourceModel models.DataSource
+}
+
+type dataSourceRespJsonStruct struct {
+	models.BasicModel
+
+	DataSourceName    string `json:"dataSourceName"`     // 数据源名称
+	ConnectionAddress string `json:"connectionAddress" ` // 连接地址
+	ConnectionPort    int    `json:"connectionPort" `    // 连接端口
+	DatabaseAccount   string `json:"databaseAccount"`    // 数据库账号
+	DatabaseType      string `json:"databaseType"`       // 数据库类型
 }
 
 func (thisQuery *DataSourceListQueryStruct) Query() (page.PagingDataResStruct, error) {
@@ -72,9 +82,9 @@ func (thisQuery *DataSourceListQueryStruct) Query() (page.PagingDataResStruct, e
 		dataSourceDB.Where("data_source_name = ?", thisQuery.DataSourceName)
 	}
 
-	var dataSourceModels models.DataSource
+	var dataSourceModels []dataSourceRespJsonStruct
 	var total int64
-	if err := dataSourceDB.Scopes(page.Paginate(&thisQuery.PagingQueryStruct)).Select("id").Find(&dataSourceModels).
+	if err := dataSourceDB.Scopes(page.Paginate(&thisQuery.PagingQueryStruct)).Select("id, created_at, updated_at, data_source_name, connection_address, connection_port, database_account, database_type").Find(&dataSourceModels).
 		Offset(-1).Limit(-1).Count(&total).Error; err != nil {
 		lg.Logger.Errorln(err.Error())
 		return page.PagingDataResStruct{}, err
@@ -150,7 +160,7 @@ func (thisUri *DataSourceUriIDStruct) Query() error {
 		return err
 	}
 
-	thisUri.dataSourceModel = dataSourceModel
+	thisUri.DataSourceModel = dataSourceModel
 	return nil
 }
 
@@ -161,12 +171,12 @@ func (thisUri *DataSourceUriIDStruct) Query() error {
 //	@return error
 func (thisUri *DataSourceUriIDStruct) Put(dataSourceJson DataSourceJsonStruct) error {
 	// 唯一校验
-	if err := uniqueVerification(0, dataSourceJson.DataSourceName); err != nil {
+	if err := uniqueVerification(thisUri.DataSourceID, dataSourceJson.DataSourceName); err != nil {
 		lg.Logger.Errorln(err.Error())
 		return err
 	}
 
-	if err := models.DB.Model(&thisUri.dataSourceModel).Updates(&dataSourceJson).Error; err != nil {
+	if err := models.DB.Model(&thisUri.DataSourceModel).Updates(&dataSourceJson).Error; err != nil {
 		lg.Logger.Errorln(err.Error())
 		return err
 	}
@@ -180,7 +190,7 @@ func (thisUri *DataSourceUriIDStruct) Put(dataSourceJson DataSourceJsonStruct) e
 //	@receiver thisDataSourceJson
 //	@return error
 func (thisUri *DataSourceUriIDStruct) Del() error {
-	if err := models.DB.Model(&thisUri.dataSourceModel).Delete("id = ?", thisUri.DataSourceID).Error; err != nil {
+	if err := models.DB.Model(&thisUri.DataSourceModel).Delete("id = ?", thisUri.DataSourceID).Error; err != nil {
 		lg.Logger.Errorln(err.Error())
 		return err
 	}
