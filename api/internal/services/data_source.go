@@ -18,21 +18,21 @@ type DataSourceListQueryStruct struct {
 
 	DataSourceName    string `form:"dataSourceName"`    // 数据源名称
 	ConnectionAddress string `form:"connectionAddress"` // 连接地址
-	Environment       string `form:"environment"`       // 环境
+	//Environment       string `form:"environment"`       // 环境
 }
 
 // DataSourceJsonStruct
 // @Description: 创建数据源
 type DataSourceJsonStruct struct {
-	DataSourceName       string `json:"dataSourceName" binding:"required"`    // 数据源名称
-	ConnectionAddress    string `json:"connectionAddress" binding:"required"` // 连接地址
-	ConnectionPort       int    `json:"connectionPort" binding:"required"`    // 连接端口
-	DatabaseAccount      string `json:"databaseAccount" binding:"required"`   // 数据库账号
-	DatabasePassword     string `json:"databasePassword" binding:"required"`  // 数据库密码
-	DatabaseType         string `json:"databaseType" binding:"required"`      // 数据库类型
-	Environment          string `json:"environment" binding:"required"`       // 环境
-	Explain              string `json:"explain"`                              // 说明
-	AdditionalParameters string `json:"additionalParameters"`                 // 额外参数
+	DataSourceName    string `json:"dataSourceName" binding:"required"`    // 数据源名称
+	ConnectionAddress string `json:"connectionAddress" binding:"required"` // 连接地址
+	ConnectionPort    int    `json:"connectionPort" binding:"required"`    // 连接端口
+	DatabaseAccount   string `json:"databaseAccount" binding:"required"`   // 数据库账号
+	DatabasePassword  string `json:"databasePassword" binding:"required"`  // 数据库密码
+	DatabaseType      string `json:"databaseType" binding:"required"`      // 数据库类型
+	//Environment          string `json:"environment" binding:"required"`       // 环境
+	Explain              string `json:"explain"`              // 说明
+	AdditionalParameters string `json:"additionalParameters"` // 额外参数
 }
 
 // DataSourceTestConnectionJsonStruct
@@ -55,9 +55,9 @@ type DataSourceUriIDStruct struct {
 func (thisQuery *DataSourceListQueryStruct) Query() (page.PagingDataResStruct, error) {
 	dataSourceDB := models.DB.Model(&models.DataSource{})
 
-	if thisQuery.Environment != "all" && thisQuery.Environment != "" {
-		dataSourceDB.Where("environment = ?", thisQuery.Environment)
-	}
+	//if thisQuery.Environment != "all" && thisQuery.Environment != "" {
+	//	dataSourceDB.Where("environment = ?", thisQuery.Environment)
+	//}
 
 	if thisQuery.ConnectionAddress != "" {
 		dataSourceDB.Where("connection_address = ?", thisQuery.ConnectionAddress)
@@ -112,13 +112,13 @@ func (thisDataSourceJson *DataSourceJsonStruct) Create() (int64, error) {
 
 	// 创建
 	res := models.DB.Model(&models.DataSource{}).Create(&models.DataSource{
-		DataSourceName:       thisDataSourceJson.DataSourceName,
-		ConnectionAddress:    thisDataSourceJson.ConnectionAddress,
-		ConnectionPort:       thisDataSourceJson.ConnectionPort,
-		DatabaseAccount:      thisDataSourceJson.DatabaseAccount,
-		DatabasePassword:     thisDataSourceJson.DatabasePassword,
-		DatabaseType:         thisDataSourceJson.DatabaseType,
-		Environment:          thisDataSourceJson.Environment,
+		DataSourceName:    thisDataSourceJson.DataSourceName,
+		ConnectionAddress: thisDataSourceJson.ConnectionAddress,
+		ConnectionPort:    thisDataSourceJson.ConnectionPort,
+		DatabaseAccount:   thisDataSourceJson.DatabaseAccount,
+		DatabasePassword:  thisDataSourceJson.DatabasePassword,
+		DatabaseType:      thisDataSourceJson.DatabaseType,
+		//Environment:          thisDataSourceJson.Environment,
 		Explain:              thisDataSourceJson.Explain,
 		AdditionalParameters: thisDataSourceJson.AdditionalParameters,
 	})
