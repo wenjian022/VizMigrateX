@@ -54,7 +54,7 @@ func Connect(dataSourceType, address string) {
 		panic(fmt.Sprintf("暂不支持该数据库类型 %s", dataSourceType))
 	}
 	// Migrate the schema
-	migrateErr := db.AutoMigrate(&User{})
+	migrateErr := db.AutoMigrate(&User{}, &DataSource{})
 
 	if migrateErr != nil {
 		panic(fmt.Sprintf("自动迁移失败，请使用检查您的 %s 地址: %s", dataSourceType, address))
