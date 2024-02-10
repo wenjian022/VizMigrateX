@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"VizMigrateX/internal/pkg/lg"
 	"VizMigrateX/internal/pkg/response"
 	"VizMigrateX/internal/services"
 	"github.com/gin-gonic/gin"
@@ -13,10 +14,20 @@ type DataSourceControllers struct{}
 // DataSourceListGet
 //
 //	@Description: 获取数据源列表
-//	@receiver *DataSourceControllers
+//	@receiver c
 //	@param context
-func (*DataSourceControllers) DataSourceListGet(ctx *gin.Context) {
-	ctx.JSON(response.ReturnStatus{}.Success("ok"))
+func (c *DataSourceControllers) DataSourceListGet(ctx *gin.Context) {
+	var query services.DataSourceListQueryStruct
+	_ = ctx.ShouldBindQuery(&query)
+
+	// 查询
+	res, err := query.Query()
+	if err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success(res))
 }
 
 // DataSourceCreatePost
@@ -25,7 +36,20 @@ func (*DataSourceControllers) DataSourceListGet(ctx *gin.Context) {
 //	@receiver c
 //	@param context
 func (c *DataSourceControllers) DataSourceCreatePost(ctx *gin.Context) {
-	ctx.JSON(response.ReturnStatus{}.Success("ok"))
+	var createJson services.DataSourceJsonStruct
+	if err := ctx.ShouldBindJSON(&createJson); err != nil {
+		lg.Logger.Errorln(err.Error())
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	// 创建
+	rowID, err := createJson.Create()
+	if err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+	ctx.JSON(response.ReturnStatus{}.Success(gin.H{"rowID": rowID}))
 }
 
 // DataSourcePut
@@ -34,6 +58,32 @@ func (c *DataSourceControllers) DataSourceCreatePost(ctx *gin.Context) {
 //	@receiver c
 //	@param context
 func (c *DataSourceControllers) DataSourcePut(ctx *gin.Context) {
+	var uri services.DataSourceUriIDStruct
+	if err := ctx.ShouldBindUri(&uri); err != nil {
+		lg.Logger.Errorln(err.Error())
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	var dataSourceJson services.DataSourceJsonStruct
+	if err := ctx.ShouldBindJSON(&dataSourceJson); err != nil {
+		lg.Logger.Errorln(err.Error())
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	//  查询id是否存在
+	if err := uri.Query(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	// 更新
+	if err := uri.Put(dataSourceJson); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
 	ctx.JSON(response.ReturnStatus{}.Success("ok"))
 }
 
@@ -43,6 +93,25 @@ func (c *DataSourceControllers) DataSourcePut(ctx *gin.Context) {
 //	@receiver c
 //	@param context
 func (c *DataSourceControllers) DataSourceDelete(ctx *gin.Context) {
+	var uri services.DataSourceUriIDStruct
+	if err := ctx.ShouldBindUri(&uri); err != nil {
+		lg.Logger.Errorln(err.Error())
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	//  查询id是否存在
+	if err := uri.Query(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	// 删除
+	if err := uri.Del(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
 	ctx.JSON(response.ReturnStatus{}.Success("ok"))
 }
 
@@ -52,5 +121,18 @@ func (c *DataSourceControllers) DataSourceDelete(ctx *gin.Context) {
 //	@receiver c
 //	@param context
 func (c *DataSourceControllers) DataSourceTestConnectionPost(ctx *gin.Context) {
+	var testConnectionJson services.DataSourceTestConnectionJsonStruct
+	if err := ctx.ShouldBindJSON(&testConnectionJson); err != nil {
+		lg.Logger.Errorln(err.Error())
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	// 连接数据库
+	if err := testConnectionJson.TestConnection(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
 	ctx.JSON(response.ReturnStatus{}.Success("ok"))
 }
