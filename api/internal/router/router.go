@@ -22,5 +22,8 @@ func Init() {
 
 		// user routes
 		LoadUserRoutes(api)
+
+		// 数据源管理
+		LoadDataSourceRoutes(api)
 	}
 }
