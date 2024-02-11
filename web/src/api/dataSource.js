@@ -65,44 +65,6 @@ export function dataSourcesDelete(dataSourcesId) {
 }
 
 /**
- * 资产导出
- * @param dataSourcesType 资产类型
- * @returns {*}
- */
-export function dataSourcesDeriveGet(dataSourcesType) {
-  return request({
-    url: `/dataSources/${dataSourcesType}/derive`,
-    responseType: 'blob'
-  })
-}
-
-/**
- *  资产导入模板
- * @param dataSourcesType 资产类型
- * @returns {*}
- */
-export function dataSourcesImportTemplateGet(dataSourcesType) {
-  return request({
-    url: `/dataSources/${dataSourcesType}/import/template`,
-    responseType: 'blob'
-  })
-}
-
-/**
- * 资产导入
- * @param dataSourcesType 资产类型
- * @param data 文件
- * @returns {*}
- */
-export function dataSourcesImportPost(dataSourcesType, data) {
-  return request({
-    url: `/dataSources/${dataSourcesType}/import`,
-    method: 'POST',
-    data
-  })
-}
-
-/**
  * 获取所有数据源
  * @returns {*}
  */
@@ -113,21 +75,52 @@ export function dataSourcesDatabasesGet(params) {
   })
 }
 
-// 数据源-选择器数据格式返回
-export function dataSourcesDatabasesSelectGet() {
+/**
+ *
+ * @param params
+ * @returns {*}
+ */
+export function dataSourcesEnvListGet(params) {
   return request({
-    url: 'dataSource/databases/select'
+    url: '/dataSource/env',
+    params: params
   })
 }
 
 /**
- * 获取数据库资产-库信息
- * @param dataSourceID
+ *
+ * @param params
  * @returns {*}
  */
-export function dataSourceDatabasesInformationGet(dataSourceID) {
+export function dataSourcesLabelListGet(params) {
   return request({
-    url: `dataSource/database/information/${dataSourceID}`,
-    method: 'GET'
+    url: '/dataSource/label',
+    params: params
+  })
+}
+
+/**
+ *
+ * @param data
+ * @returns {*}
+ */
+export function dataSourcesLabelPost(data) {
+  return request({
+    url: '/dataSource/label',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ *
+ * @param data
+ * @returns {*}
+ */
+export function dataSourcesEnvPost(data) {
+  return request({
+    url: '/dataSource/env',
+    method: 'POST',
+    data
   })
 }

@@ -2,12 +2,12 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }} </h1>
+        <img v-if="logo" src="@/assets/favicon.png" class="sidebar-logo">
+        <!--                <h1 v-else class="sidebar-title">{{ title }} </h1>-->
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
+        <img v-if="logo" src="@/assets/favicon.png" class="sidebar-logo">
+        <span style="font-size: 15px" class="sidebar-title">{{ title }} </span>
       </router-link>
     </transition>
   </div>
@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Admin Template',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      title: 'VizMigrateX',
+      logo: '@/assets/favicon.png'
     }
   }
 }

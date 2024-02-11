@@ -46,44 +46,50 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/workbench',
     children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      path: 'workbench',
+      name: 'Workbench',
+      component: () => import('@/views/workbench/index'),
+      meta: { title: '工作台', icon: 'workbench' }
     }]
   },
 
   {
     path: '/dataSource',
     component: Layout,
+    meta: { title: '数据源管理', icon: 'dataSource' },
     redirect: '/dataSource/manage',
     children: [{
       path: '/dataSource/manage',
       name: 'DataSource',
       component: () => import('@/views/dataSource/index'),
-      meta: { title: '数据源管理', icon: 'dashboard' }
+      meta: { title: '数据源' }
+    }, {
+      path: '/dataSource/manage/edit',
+      name: 'DataSourceEdit',
+      hidden: true,
+      component: () => import('@/views/dataSource/edit'),
+      meta: { title: '编辑数据源' }
     }]
   },
   {
     path: '/dataReplication',
     component: Layout,
     redirect: '/dataReplication/task',
+    meta: { title: '数据复制', icon: 'data_exchange' },
     children: [{
       path: 'task',
       name: 'DataReplication',
       component: () => import('@/views/dataReplication/index'),
-      meta: { title: '数据复制', icon: 'dashboard' }
+      meta: { title: '数据复制' }
     }, {
       path: 'task/edit',
       name: 'DataReplicationEdit',
       hidden: true, // 不在侧边栏显示
       component: () => import('@/views/dataReplication/replication/index'),
       meta: { title: '编辑', icon: 'dashboard' }
-    }
-
-    ]
+    }]
   },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

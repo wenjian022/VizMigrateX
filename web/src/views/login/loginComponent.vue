@@ -91,7 +91,7 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push('/dashboard')
+            this.$router.push('/workbench')
             this.loading = false
           }).catch(() => {
             this.loading = false

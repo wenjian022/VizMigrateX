@@ -79,7 +79,7 @@ export default {
           const { code } = await userInitializationPost(this.initializationUserForm)
           if (code === 0) {
             this.$store.dispatch('user/login', this.initializationUserForm).then(() => {
-              this.$router.push('/dashboard')
+              this.$router.push('/workbench')
               this.loading = false
             }).catch(() => {
               this.loading = false
