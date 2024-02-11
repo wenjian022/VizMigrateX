@@ -42,7 +42,7 @@ type LabelUriLabelIdStruct struct {
 }
 
 func (thisQuery *EnvQueryStruct) Query() (page.PagingDataResStruct, error) {
-	envDB := models.DB
+	envDB := models.DB.Model(&models.Environment{})
 
 	if thisQuery.Name != "" {
 		envDB.Where("name = ?", thisQuery.Name)
@@ -64,7 +64,7 @@ func (thisQuery *EnvQueryStruct) Query() (page.PagingDataResStruct, error) {
 }
 
 func (thisQuery *LabelQueryStruct) Query() (page.PagingDataResStruct, error) {
-	labelDB := models.DB
+	labelDB := models.DB.Model(&models.Label{})
 
 	if thisQuery.Name != "" {
 		labelDB.Where("name = ?", thisQuery.Name)
@@ -85,13 +85,13 @@ func (thisQuery *LabelQueryStruct) Query() (page.PagingDataResStruct, error) {
 	}, nil
 }
 
-func (thisJson *EnvCreateJsonStruct) Create() error {
+func (thisJson *EnvCreateJsonStruct) Create(userID uint) error {
 	// 唯一校验
 	err := models.DB.Where("name = ? and id != 0", thisJson.Name).Take(&models.Environment{}).Error
 	if err != nil {
 		if errors.Is(GormLogger.ErrRecordNotFound, err) {
 			// 创建
-			if _err := models.DB.Create(&models.Environment{Name: thisJson.Name}).Error; _err != nil {
+			if _err := models.DB.Create(&models.Environment{Name: thisJson.Name, CreatorID: userID}).Error; _err != nil {
 				lg.Logger.Errorln(err.Error())
 				return fmt.Errorf("创建环境失败")
 			}
@@ -102,13 +102,13 @@ func (thisJson *EnvCreateJsonStruct) Create() error {
 	return fmt.Errorf("环境名称重复")
 }
 
-func (thisJson *LabelCreateJsonStruct) Create() error {
+func (thisJson *LabelCreateJsonStruct) Create(userID uint) error {
 	// 唯一校验
 	err := models.DB.Where("name = ? and id != 0", thisJson.Name).Take(&models.Label{}).Error
 	if err != nil {
 		if errors.Is(GormLogger.ErrRecordNotFound, err) {
 			// 创建
-			if _err := models.DB.Create(&models.Label{Name: thisJson.Name}).Error; _err != nil {
+			if _err := models.DB.Create(&models.Label{Name: thisJson.Name, CreatorID: userID}).Error; _err != nil {
 				lg.Logger.Errorln(err.Error())
 				return fmt.Errorf("创建标签失败")
 			}

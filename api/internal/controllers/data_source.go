@@ -3,6 +3,7 @@ package controllers
 import (
 	"VizMigrateX/internal/pkg/lg"
 	"VizMigrateX/internal/pkg/response"
+	"VizMigrateX/internal/pkg/utils"
 	"VizMigrateX/internal/services"
 	"github.com/gin-gonic/gin"
 )
@@ -189,8 +190,10 @@ func (c *DataSourceControllers) LabelCreatePost(ctx *gin.Context) {
 		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
 		return
 	}
+	// 获取用户信息
+	value := ctx.MustGet("USER").(*utils.Claims)
 
-	if err := createJson.Create(); err != nil {
+	if err := createJson.Create(value.Uid); err != nil {
 		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
 		return
 	}
@@ -249,8 +252,10 @@ func (c *DataSourceControllers) EnvCreatePost(ctx *gin.Context) {
 		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
 		return
 	}
+	// 获取用户信息
+	value := ctx.MustGet("USER").(*utils.Claims)
 
-	if err := createJson.Create(); err != nil {
+	if err := createJson.Create(value.Uid); err != nil {
 		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
 		return
 	}
