@@ -158,3 +158,123 @@ func (c *DataSourceControllers) DataSourceTestConnectionPost(ctx *gin.Context) {
 
 	ctx.JSON(response.ReturnStatus{}.Success("ok"))
 }
+
+// LabelListGet
+//
+//	@Description: 获取标签列表
+//	@receiver c
+//	@param ctx
+func (c *DataSourceControllers) LabelListGet(ctx *gin.Context) {
+	var query services.LabelQueryStruct
+	_ = ctx.ShouldBindQuery(&query)
+
+	res, err := query.Query()
+	if err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success(res))
+}
+
+// LabelCreatePost
+//
+//	@Description: 创建标签列表
+//	@receiver c
+//	@param ctx
+func (c *DataSourceControllers) LabelCreatePost(ctx *gin.Context) {
+	var createJson services.LabelCreateJsonStruct
+	if err := ctx.ShouldBindJSON(&createJson); err != nil {
+		lg.Logger.Errorln(err)
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	if err := createJson.Create(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success("ok"))
+}
+
+// LabelDel
+//
+//	@Description: 删除标签列表
+//	@receiver c
+//	@param ctx
+func (c *DataSourceControllers) LabelDel(ctx *gin.Context) {
+	var uri services.LabelUriLabelIdStruct
+	if err := ctx.ShouldBindUri(&uri); err != nil {
+		lg.Logger.Errorln(err)
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	if err := uri.Del(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success("ok"))
+}
+
+// EnvListGet
+//
+//	@Description: 获取环境列表
+//	@receiver c
+//	@param ctx
+func (c *DataSourceControllers) EnvListGet(ctx *gin.Context) {
+	var query services.EnvQueryStruct
+	_ = ctx.ShouldBindQuery(&query)
+
+	res, err := query.Query()
+	if err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success(res))
+}
+
+// EnvCreatePost
+//
+//	@Description: 创建环境列表
+//	@receiver c
+//	@param ctx
+func (c *DataSourceControllers) EnvCreatePost(ctx *gin.Context) {
+	var createJson services.EnvCreateJsonStruct
+	if err := ctx.ShouldBindJSON(&createJson); err != nil {
+		lg.Logger.Errorln(err)
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	if err := createJson.Create(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success("ok"))
+}
+
+// EnvDel
+//
+//	@Description: 删除环境列表
+//	@receiver c
+//	@param ctx
+func (c *DataSourceControllers) EnvDel(ctx *gin.Context) {
+	var uri services.EnvUriEnvIdStruct
+	if err := ctx.ShouldBindUri(&uri); err != nil {
+		lg.Logger.Errorln(err)
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	if err := uri.Del(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success("ok"))
+}

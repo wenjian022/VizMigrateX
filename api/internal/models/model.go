@@ -2,6 +2,8 @@ package models
 
 import (
 	"VizMigrateX/internal/pkg/lg"
+	"database/sql/driver"
+	"errors"
 	"fmt"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -12,7 +14,9 @@ import (
 	"time"
 )
 
-type LocalTime time.Time
+type LocalTime struct {
+	time.Time
+}
 
 type BasicModel struct {
 	ID        uint       `json:"id" gorm:"primarykey"`
@@ -56,7 +60,7 @@ func Connect(dataSourceType, address string) {
 		panic(fmt.Sprintf("暂不支持该数据库类型 %s", dataSourceType))
 	}
 	// Migrate the schema
-	migrateErr := db.AutoMigrate(&User{}, &DataSource{})
+	migrateErr := db.AutoMigrate(&User{}, &DataSource{}, &Environment{}, &Label{})
 
 	if migrateErr != nil {
 		panic(fmt.Sprintf("自动迁移失败，请使用检查您的 %s 地址: %s", dataSourceType, address))
@@ -69,9 +73,44 @@ func Connect(dataSourceType, address string) {
 		panic(fmt.Sprintf("连接失败，请使用检查您的:%s 地址: %s err: %s", dataSourceType, address, err.Error()))
 	}
 
+	// 初始化表数据
+	initializeTableDataEnvironment()
+
 }
 
-func (t *LocalTime) MarshalJSON() ([]byte, error) {
-	tTime := time.Time(*t)
+func (lt *LocalTime) MarshalJSON() ([]byte, error) {
+	tTime := lt.Time
 	return []byte(fmt.Sprintf("\"%v\"", tTime.Format("2006-01-02 15:04:05"))), nil
+}
+
+// Scan
+//
+//	@Description: 实现GORM的Scanner接口
+//	@receiver lt
+//	@param value
+//	@return error
+func (lt *LocalTime) Scan(value interface{}) error {
+	if value == nil {
+		lt.Time = time.Time{}
+		return nil
+	}
+	t, ok := value.(time.Time)
+	if !ok {
+		return errors.New("failed to scan LocalTime field - source is not a time.Time")
+	}
+	lt.Time = t
+	return nil
+}
+
+// Value
+//
+//	@Description: Valuer接口
+//	@receiver lt
+//	@return driver.Value
+//	@return error
+func (lt *LocalTime) Value() (driver.Value, error) {
+	if lt.IsZero() {
+		return nil, nil
+	}
+	return lt.Time, nil
 }

@@ -25,5 +25,8 @@ func Init() {
 
 		// 数据源管理
 		LoadDataSourceRoutes(api)
+
+		// 数据复制
+		LoadDataReplicationRoutes(api)
 	}
 }
