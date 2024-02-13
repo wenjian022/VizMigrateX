@@ -64,15 +64,28 @@
         :data="DataSourceTableData"
       >
         <el-table-column
-          prop="dataSourceName"
+          prop="data_source_name"
           label="数据源名称"
           align="center"
-        />
+        >
+          <template slot-scope="scope">
+            <svg-icon style="margin-right: 3px" :icon-class="scope.row.database_type.split('_')[1]" />
+            <el-link @click="$router.push({name:'DataSourceEdit',query:{dataSourceID :scope.row.id}})">
+              {{ scope.row.data_source_name }}
+            </el-link>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="dataSourceName"
+          prop="environment_name"
           label="所属环境"
           align="center"
-        />
+        >
+          <template slot-scope="scope">
+            <el-tag :style="{color: scope.row.environment_color}" style="background-color:#f8f8f8;" size="small">
+              {{ scope.row.environment_name }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="created_at"
           label="创建日期"
@@ -84,29 +97,33 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.connectionAddress }}:{{ scope.row.connectionPort }}</span>
+            <span>{{ scope.row.connection_address }}:{{ scope.row.connection_port }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="connectionAddress"
+          prop="database_account"
           label="数据库账号"
           align="center"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.connectionAddress }}:{{ scope.row.connectionPort }}</span>
-          </template>
-        </el-table-column>
+        />
         <el-table-column
           prop="label"
           label="标签"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.connectionAddress }}:{{ scope.row.connectionPort }}</span>
+            <el-tag
+              v-for="(item,index) in scope.row.label"
+              :key="index"
+              style="margin-left: 3px"
+              type="info"
+              size="mini"
+            >
+              <span><svg-icon icon-class="tag" /> {{ item }}</span>
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column
-          prop="creator"
+          prop="creator_name"
           label="创建人"
           align="center"
         />
@@ -117,14 +134,20 @@
           align="center"
         >
           <template slot-scope="scope">
-            <div v-if="scope.row.status === 0">
+            <div v-if="scope.row.state === 0">
               <div class="status-point" style=" background-color:#67C23A" />
-              正 常
+              正常
             </div>
 
-            <div v-if="scope.row.status === 1">
+            <div v-if="scope.row.state === 1">
               <div class="status-point" style="background-color:#ff1c1f" />
-              异 常
+              异常
+              <el-tooltip class="item" effect="dark" placement="bottom">
+                <template slot="content">
+                  <p style="max-width:200px;">{{ scope.row.connection_log }}</p>
+                </template>
+                <i class="el-icon-warning" />
+              </el-tooltip>
             </div>
           </template>
         </el-table-column>
@@ -134,10 +157,17 @@
           align="center"
         >
           <template scope="scope">
-            <el-button type="text" size="mini" @click="upDataSource(scope.row.id)">编 辑</el-button>
-            <span style="margin-right: 3px;margin-left: 3px">|</span>
-            <el-button size="mini" type="text" style="color:#F56C6C" @click="delDataSource(scope.row)">删 除
-            </el-button>
+            <el-button type="text" size="mini" @click="connectionTest(scope.row.id)">检测可用性</el-button>
+            <el-dropdown>
+              <span class="el-dropdown-link">
+                <i class="el-icon-arrow-down el-icon--right" />
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click="$router.push({name:'DataSourceEdit',query:{dataSourceID :scope.row.id}})">编辑</el-dropdown-item>
+                <el-dropdown-item @click="">详情</el-dropdown-item>
+                <el-dropdown-item @click="">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -145,7 +175,11 @@
   </div>
 </template>
 <script>
-import { dataSourcesDatabasesGet } from '@/api/dataSource'
+import {
+  dataSourcesConnectionTestIDPost,
+  dataSourcesConnectionTestPost,
+  dataSourcesDatabasesGet
+} from '@/api/dataSource'
 
 export default {
   name: 'DataSourceTab',
@@ -176,11 +210,17 @@ export default {
     async showDataSourceGet() {
       this.$router.push({ name: 'DataSource', query: { ...this.searchForm }})
       const { result } = await dataSourcesDatabasesGet(this.searchForm)
-      this.tableData = result.data
+      this.DataSourceTableData = result.data
     },
     searchClick() {
       this.searchForm.page = 1
       this.showDataSourceGet()
+    },
+    async connectionTest(rowID) {
+      const { code } = await dataSourcesConnectionTestIDPost(rowID)
+      if (code === 0) {
+        this.$message.success('数据源可用,连接成功')
+      }
     }
   }
 }

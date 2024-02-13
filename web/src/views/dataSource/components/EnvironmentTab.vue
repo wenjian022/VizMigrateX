@@ -9,7 +9,12 @@
       >创建环境
       </el-button>
       <el-form ref="searchForm" style="float:left;" :model="searchForm" @submit.native.prevent>
-        <el-input v-model="searchForm.name" style="width: 300px;margin-right: 10px" size="small" placeholder="搜索环境名称">
+        <el-input
+          v-model="searchForm.name"
+          style="width: 300px;margin-right: 10px"
+          size="small"
+          placeholder="搜索环境名称"
+        >
           <el-button slot="append" icon="el-icon-search" @click="searchClick" />
         </el-input>
       </el-form>
@@ -27,9 +32,13 @@
           prop="name"
           label="环境名称"
           align="center"
-        />
+        >
+          <template slot-scope="scope">
+            <el-tag :style="{color: scope.row.color}" style="background-color:#f8f8f8;" size="small">{{ scope.row.environment_name }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop=""
+          prop="data_source_count"
           label="数据源数量"
           align="center"
         />
@@ -39,15 +48,10 @@
           align="center"
         />
         <el-table-column
-          prop="creator"
+          prop="creator_name"
           label="创建人"
           align="center"
-        >
-          <template slot-scope="scope">
-            <div v-if="!scope.row.creator"><span>-</span></div>
-            <div v-else />
-          </template>
-        </el-table-column>
+        />
 
         <el-table-column
           prop="date"
@@ -55,7 +59,7 @@
           align="center"
         >
           <template scope="scope">
-            <div v-if="scope.row.name==='生产'||scope.row.name ==='预发' ">
+            <div v-if="scope.row.environment_name==='生产'||scope.row.environment_name ==='预发' ">
               <span>-</span>
             </div>
             <div v-else />
@@ -68,10 +72,13 @@
       </el-table>
     </el-row>
 
-    <el-dialog width="20%" :visible.sync="createEnvDialog">
+    <el-dialog width="20%" :visible.sync="createEnvDialog" :before-close="handleClose">
       <el-form ref="envForm" class="labelClass" :rules="envRules" :model="envForm">
         <el-form-item label="环境名称" prop="name">
           <el-input v-model="envForm.name" size="small" placeholder="请输入环境名称" />
+        </el-form-item>
+        <el-form-item label="请选择一种颜色作为环境区分:" prop="name">
+          <el-color-picker v-model="envForm.color" size="small" />
         </el-form-item>
       </el-form>
       <div style="text-align: right">
@@ -94,14 +101,18 @@ export default {
         name: ''
       },
       envForm: {
-        name: ''
+        name: '',
+        color: ''
       },
-      envRules: { name: [{ required: true, message: '请输入环境名称', trigger: 'change' }] },
+      envRules: {
+        name: [{ required: true, message: '请输入环境名称', trigger: 'change' }]
+      },
       envTableList: []
     }
   },
   mounted() {
     this.getEnv()
+    this.colorCode()
   },
   methods: {
     createEnv() {
@@ -124,6 +135,19 @@ export default {
     searchClick() {
       this.searchForm.page = 1
       this.getEnv()
+    },
+    // 初始化颜色选择器
+    colorCode() {
+      // const makingColorCode = '0123456789ABCDEF'
+      // this.envForm.color = '#'
+      // for (let counter = 0; counter < 6; counter++) {
+      //   this.envForm.color = this.envForm.color + makingColorCode[Math.floor(Math.random() * 16)]
+      // }
+      this.envForm.color = '#' + Math.floor(Math.random() * 16777215).toString(16)
+    },
+    handleClose(done) {
+      this.envForm.name = ''
+      done()
     }
   }
 }

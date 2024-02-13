@@ -43,9 +43,10 @@ func (c *DataSourceControllers) DataSourceCreatePost(ctx *gin.Context) {
 		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
 		return
 	}
-
+	// 获取创建人信息
+	userInfo := ctx.MustGet("USER").(*utils.Claims)
 	// 创建
-	rowID, err := createJson.Create()
+	rowID, err := createJson.Create(userInfo.Uid)
 	if err != nil {
 		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
 		return
@@ -153,6 +154,28 @@ func (c *DataSourceControllers) DataSourceTestConnectionPost(ctx *gin.Context) {
 
 	// 连接数据库
 	if err := testConnectionJson.TestConnection(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	ctx.JSON(response.ReturnStatus{}.Success("ok"))
+}
+
+func (c *DataSourceControllers) DataSourceTestConnectionIDPost(ctx *gin.Context) {
+	var uri services.DataSourceUriIDStruct
+	if err := ctx.ShouldBindUri(&uri); err != nil {
+		lg.Logger.Errorln(err.Error())
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	//  查询id是否存在
+	if err := uri.Query(); err != nil {
+		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
+		return
+	}
+
+	if err := uri.TestConnection(); err != nil {
 		ctx.JSON(response.ReturnStatus{}.Error(err.Error()))
 		return
 	}

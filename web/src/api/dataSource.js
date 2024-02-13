@@ -14,6 +14,18 @@ export function dataSourcesConnectionTestPost(data) {
 }
 
 /**
+ * 数据源连接测试
+ * @param dataSourcesID
+ * @returns {*}
+ */
+export function dataSourcesConnectionTestIDPost(dataSourcesID) {
+  return request({
+    url: `dataSource/testConnection/${dataSourcesID}`,
+    method: 'POST'
+  })
+}
+
+/**
  * 创建数据源
  * @param data
  * @returns {*}

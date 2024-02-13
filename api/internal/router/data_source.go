@@ -23,6 +23,8 @@ func LoadDataSourceRoutes(r *gin.RouterGroup) *gin.RouterGroup {
 		dataSource.DELETE("/:dataSourceID", dataSourceController.DataSourceDelete)
 		// 测试连接
 		dataSource.POST("/testConnection", dataSourceController.DataSourceTestConnectionPost)
+		// 测试连接
+		dataSource.POST("/testConnection/:dataSourceID", dataSourceController.DataSourceTestConnectionIDPost)
 	}
 	// 环境路由
 	env := dataSource.Group("/env")

@@ -4,7 +4,7 @@
       <el-card shadow="never">
         <el-link @click="$router.push({name:'DataSource'})">
           <i class="el-icon-back" style="font-size: 15px">
-            <span style="margin-left: 3px">{{ $route.query.dataSourceID ? '编辑数据源':'创建数据源' }}</span>
+            <span style="margin-left: 3px">{{ $route.query.dataSourceID ? '编辑数据源' : '创建数据源' }}</span>
           </i>
         </el-link>
       </el-card>
@@ -68,8 +68,11 @@
             <el-col :span="24">
               <el-form-item label="环境:" prop="environment">
                 <el-radio-group v-model="dataSourceForm.environment">
-                  <el-radio v-for="(item,index) in environmentList" :key="index" :label="item.value">
-                    <el-tag style="background-color:#fff;" :style="{color: item.color,}" size="small">{{ item.value }}</el-tag>
+                  <el-radio v-for="(item,index) in environmentList" :key="index" :label="item.id">
+                    <el-tag style="background-color:#f8f8f8;" :style="{color: item.color,}" size="small">{{
+                      item.environment_name
+                    }}
+                    </el-tag>
                   </el-radio>
                 </el-radio-group>
               </el-form-item>
@@ -77,8 +80,8 @@
             <el-col :span="24">
               <el-form-item label="标签:">
                 <el-checkbox-group v-model="dataSourceForm.label">
-                  <el-checkbox v-for="(item,index) in labelList" :key="index" :label="item.value">
-                    <el-tag size="small" effect="plain" type="info">{{ item.value }}</el-tag>
+                  <el-checkbox v-for="(item,index) in labelList" :key="index" :label="item.name">
+                    <span><svg-icon icon-class="tag" /> {{ item.name }}</span>
                   </el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
@@ -112,15 +115,19 @@
 </template>
 
 <script>
-import { dataSourcesConnectionTestPost, dataSourcesDatabasesCratePost, dataSourcesDatabasesPut } from '@/api/dataSource'
+import {
+  dataSourcesConnectionTestPost,
+  dataSourcesDatabasesCratePost,
+  dataSourcesEnvListGet, dataSourcesLabelListGet
+} from '@/api/dataSource'
 import { validateIP, validatorPort } from '@/validated/validated'
 
 export default {
   name: 'DataSourceEdit',
   data() {
     return {
-      labelList: [{ value: '杭州' }],
-      environmentList: [{ value: '生产', color: 'red' }, { value: '预发', color: '' }],
+      labelList: [],
+      environmentList: [],
       cascaderOptions: [
         {
           label: '自建数据库',
@@ -152,7 +159,7 @@ export default {
         databaseAccount: '',
         databasePassword: '',
         additionalParameters: '',
-        environment: '生产',
+        environment: 0,
         label: []
       },
       dataSourceRules: {
@@ -181,23 +188,56 @@ export default {
       }
     }
   },
+  mounted() {
+    this.initEnv()
+    this.initLabel()
+  },
   methods: {
-    onSubmit() {
+    async initEnv() {
+      const { code, result } = await dataSourcesEnvListGet({ size: 100, page: 1 })
+      if (code === 0) {
+        this.environmentList = result.data
+        this.environmentList.forEach((item) => {
+          if (item.environment_name === '生产') {
+            this.dataSourceForm.environment = item.id
+          }
+        })
+      }
+    },
+    async initLabel() {
+      const { code, result } = await dataSourcesLabelListGet({ size: 100, page: 1 })
+      if (code === 0) {
+        this.labelList = result.data
+      }
+    },
+    onSubmit(options) {
       this.$refs['dataSourceForm'].validate(async(valid) => {
         if (valid) {
-          if (this.drawerPattern) {
-            const { code } = await dataSourcesDatabasesCratePost(this.dataSourceForm)
-            if (code === 0) {
+          const { code } = await dataSourcesDatabasesCratePost(this.dataSourceForm)
+          if (code === 0) {
+            const _loading = this.$loading({
+              lock: true,
+              text: 'Loading',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            })
+            setTimeout(() => {
               this.$message.success('添加成功')
-              this.$router.go(0)
-            }
-          } else {
-            const { code } = await dataSourcesDatabasesPut(this.dataSourceForm, this.dataSourceForm.id)
-            if (code === 0) {
-              this.$message.success('修改成功')
-              this.$router.go(0)
-            }
+              _loading.close()
+              this.$router.push({ name: 'DataSource' })
+            }, 3000)
+
+            // this.$router.go(0)
           }
+          // if (this.drawerPattern) {
+          //
+          // } else {
+          //   const { code } = await dataSourcesDatabasesPut(this.dataSourceForm, this.dataSourceForm.id)
+          //   if (code === 0) {
+          //     this.$message.success('修改成功')
+          //     this.$router.go(0)
+          //   }
+          // }
         }
       })
     },
