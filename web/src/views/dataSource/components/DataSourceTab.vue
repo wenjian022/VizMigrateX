@@ -163,7 +163,9 @@
                 <i class="el-icon-arrow-down el-icon--right" />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click="$router.push({name:'DataSourceEdit',query:{dataSourceID :scope.row.id}})">编辑</el-dropdown-item>
+                <el-dropdown-item @click="$router.push({name:'DataSourceEdit',query:{dataSourceID :scope.row.id}})">
+                  编辑
+                </el-dropdown-item>
                 <el-dropdown-item @click="">详情</el-dropdown-item>
                 <el-dropdown-item @click="">删除</el-dropdown-item>
               </el-dropdown-menu>
@@ -177,7 +179,6 @@
 <script>
 import {
   dataSourcesConnectionTestIDPost,
-  dataSourcesConnectionTestPost,
   dataSourcesDatabasesGet
 } from '@/api/dataSource'
 
@@ -217,10 +218,12 @@ export default {
       this.showDataSourceGet()
     },
     async connectionTest(rowID) {
-      const { code } = await dataSourcesConnectionTestIDPost(rowID)
-      if (code === 0) {
+      await dataSourcesConnectionTestIDPost(rowID).then(_ => {
         this.$message.success('数据源可用,连接成功')
-      }
+      }, (err) => {
+        console.log(err)
+      })
+      await this.showDataSourceGet()
     }
   }
 }

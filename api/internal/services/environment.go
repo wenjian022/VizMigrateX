@@ -80,12 +80,22 @@ func (thisQuery *LabelQueryStruct) Query() (page.PagingDataResStruct, error) {
 	labelDB := models.DB.Model(&models.Label{})
 
 	if thisQuery.Name != "" {
-		labelDB.Where("name = ?", thisQuery.Name)
+		labelDB.Where("label_name = ?", thisQuery.Name)
 	}
 
-	var LabelModels []models.Label
+	var LabelModels []struct {
+		CreatedAt       models.LocalTime `json:"created_at"`
+		LabelId         int              `json:"label_id"`
+		LabelName       string           `json:"label_name"`
+		CreatorName     interface{}      `json:"creator_name" default:"-"`
+		DataSourceCount int              `json:"data_source_count" default:"0"`
+	}
+
 	var total int64
-	if err := labelDB.Scopes(page.Paginate(&thisQuery.PagingQueryStruct)).Find(&LabelModels).
+	if err := labelDB.Select("label.created_at AS created_at, label.id AS label_id, label.name AS label_name, u.name AS creator_name, COUNT(ds.id) AS data_source_count").
+		Joins("as label left join users u on label.creator_id = u.id LEFT JOIN data_sources ds ON INSTR(ds.label, label.name) > 0").
+		Group("label.name").
+		Scopes(page.Paginate(&thisQuery.PagingQueryStruct)).Find(&LabelModels).
 		Offset(-1).Limit(-1).Count(&total).Error; err != nil {
 		lg.Logger.Errorln(err)
 		return page.PagingDataResStruct{}, err

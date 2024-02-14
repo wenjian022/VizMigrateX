@@ -35,12 +35,12 @@
         >
           <template slot-scope="scope">
             <el-tag type="info" size="mini">
-              <span><svg-icon icon-class="tag" /> {{ scope.row.name }}</span>
+              <span><svg-icon icon-class="tag" /> {{ scope.row.label_name }}</span>
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column
-          prop=""
+          prop="data_source_count"
           label="数据源数量"
           align="center"
         />
@@ -50,7 +50,7 @@
           align="center"
         />
         <el-table-column
-          prop="creator"
+          prop="creator_name"
           label="创建人"
           align="center"
         >
@@ -70,10 +70,7 @@
               <span>-</span>
             </div>
             <div v-else />
-            <!--            <el-button type="text" size="mini" @click="upDataSource(scope.row.id)">编 辑</el-button>-->
-            <!--            <span style="margin-right: 3px;margin-left: 3px">|</span>-->
-            <!--            <el-button size="mini" type="text" style="color:#F56C6C" @click="delDataSource(scope.row)">删 除-->
-            <!--            </el-button>-->
+            <el-button type="text" style="color: #F56C6C" size="mini" @click="">删 除</el-button>
           </template>
         </el-table-column>
       </el-table>
