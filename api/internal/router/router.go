@@ -28,5 +28,9 @@ func Init() {
 
 		// 数据复制
 		LoadDataReplicationRoutes(api)
+
+		// 备份与恢复
+		LoadBackupAndRecoveryRoutes(api)
+
 	}
 }
