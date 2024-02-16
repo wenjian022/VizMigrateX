@@ -91,6 +91,36 @@ export const constantRoutes = [
       meta: { title: '编辑', icon: 'dashboard' }
     }]
   },
+  {
+    path: '/backup',
+    component: Layout,
+    redirect: '/backup/task',
+    meta: { title: '备份与恢复', icon: 'data_exchange' },
+    children: [{
+      path: 'task',
+      name: 'DataReplication',
+      component: () => import('@/views/dataReplication/index'),
+      meta: { title: '数据备份' }
+    }, {
+      path: '/backup/task/edit',
+      name: 'DataReplicationEdit',
+      hidden: true, // 不在侧边栏显示
+      component: () => import('@/views/dataReplication/replication/index'),
+      meta: { title: '编辑', icon: 'dashboard' }
+    }, {
+      path: '/backup/host/list',
+      name: 'BackupHostList',
+      component: () => import('@/views/backupAndRecovery/backupHost/index'),
+      meta: { title: '备份主机' }
+    }, {
+      path: '/backup/host/manage/edit',
+      name: 'BackupHostEdit',
+      hidden: true,
+      component: () => import('@/views/backupAndRecovery/backupHost/backupHostEdit'),
+      meta: { title: '编辑备份主机' }
+    }]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
