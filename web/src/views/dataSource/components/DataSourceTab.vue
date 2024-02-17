@@ -163,7 +163,7 @@
                 <i class="el-icon-arrow-down el-icon--right" />
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click="$router.push({name:'DataSourceEdit',query:{dataSourceID :scope.row.id}})">
+                <el-dropdown-item @click.native="$router.push({name:'DataSourceEdit',query:{dataSourceID :scope.row.id}})">
                   编辑
                 </el-dropdown-item>
                 <el-dropdown-item @click="">详情</el-dropdown-item>

@@ -32,7 +32,7 @@
                   <el-form-item label="数据库类型:" prop="databaseType" size="small">
                     <el-cascader
                       v-model="dataSourceForm.databaseType"
-                      :disabled="dataSourceID"
+                      :disabled="Boolean(dataSourceID)"
                       :options="cascaderOptions"
                       style="width: 350px;"
                       @change="cascaderChange"
@@ -100,7 +100,11 @@
                         </div>
                       </el-tooltip>
                     </template>
-                    <el-input v-model="dataSourceForm.additionalParameters" size="small" placeholder="请输入数据库账号" />
+                    <el-input
+                      v-model="dataSourceForm.additionalParameters"
+                      size="small"
+                      placeholder="请输入数据库账号"
+                    />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -140,7 +144,10 @@
         </el-row>
 
         <el-col :span="24" style="margin-bottom: 20px;text-align: center">
-          <el-button type="primary" size="small" @click="onSubmit">{{ dataSourceID? '更新数据源': '创建数据源' }}</el-button>
+          <el-button type="primary" size="small" @click="onSubmit">{{
+            dataSourceID ? '更新数据源' : '创建数据源'
+          }}
+          </el-button>
           <el-button size="small" @click="connectionTest">测试连接</el-button>
         </el-col>
       </el-card>
@@ -257,33 +264,26 @@ export default {
         this.labelList = result.data
       }
     },
-    onSubmit(options) {
+    onSubmit() {
       this.$refs['dataSourceForm'].validate(async(valid) => {
         if (valid) {
-          if (this.dataSourceForm) {
-            const { code } = await dataSourcesDatabasesPut(this.dataSourceForm, this.dataSourceForm.id)
-            if (code === 0) {
-              this.$message.success('修改成功')
-              setTimeout(() => {
-                this.$message.success('添加成功')
-                this.$router.push({ name: 'DataSource' })
-              }, 3000)
-            }
-          } else {
-            const { code } = await dataSourcesDatabasesCratePost(this.dataSourceForm)
-            if (code === 0) {
-              setTimeout(() => {
-                this.$message.success('添加成功')
-                this.$router.push({ name: 'DataSource' })
-              }, 3000)
-            }
-          }
+          const loading = this.$loading({
+            lock: true,
+            text: '数据加载中，请稍后……',
+            background: 'rgba(0, 0, 0, 0.5)'
+          })
 
-          // if (this.drawerPattern) {
-          //
-          // } else {
+          const submit = this.dataSourceID ? dataSourcesDatabasesPut(this.dataSourceForm, this.dataSourceForm.id) : dataSourcesDatabasesCratePost()
 
-          // }
+          submit.then(_ => {
+            setTimeout(() => {
+              loading.close()
+              this.$message.success(this.dataSourceID ? '修改成功' : '创建成功')
+              this.$router.push({ name: 'DataSource' })
+            }, 1500)
+          }).catch(_ => {
+            loading.close()
+          })
         }
       })
     },

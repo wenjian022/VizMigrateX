@@ -7,7 +7,7 @@ import request from '@/utils/request'
  */
 export function dataReplicationTaskListGet(params) {
   return request({
-    url: 'data/replication/task/list',
+    url: 'dataReplication/task/list',
     method: 'GET',
     params
   })
@@ -20,7 +20,7 @@ export function dataReplicationTaskListGet(params) {
  */
 export function dataReplicationTaskPost(data) {
   return request({
-    url: 'data/replication/task',
+    url: 'dataReplication/task',
     method: 'POST',
     data
   })
@@ -33,7 +33,7 @@ export function dataReplicationTaskPost(data) {
  */
 export function dataReplicationTaskInfoGet(taskID) {
   return request({
-    url: `data/replication/task/${taskID}`,
+    url: `dataReplication/task/${taskID}`,
     method: 'GET'
   })
 }
@@ -47,7 +47,7 @@ export function dataReplicationTaskInfoGet(taskID) {
  */
 export function dataReplicationTaskPut(step, taskID, data) {
   return request({
-    url: `data/replication/task/${step}/${taskID}`,
+    url: `dataReplication/task/${step}/${taskID}`,
     method: 'PUT',
     data
   })

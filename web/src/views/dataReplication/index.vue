@@ -62,19 +62,13 @@
             :data="tableData"
           >
             <el-table-column
-              label="序号"
-              type="index"
-              width="70"
-              align="center"
-            />
-            <el-table-column
               label="任务名称"
               prop="taskName"
               align="center"
             />
             <el-table-column
               label="任务创建时间"
-              prop="createTime"
+              prop="created_at"
               align="center"
             />
             <el-table-column
@@ -83,7 +77,7 @@
               align="center"
             >
               <template scope="scope">
-                <el-tag size="small">{{ scope.row.sourceDataSource.assetName }}</el-tag>
+
               </template>
             </el-table-column>
             <el-table-column

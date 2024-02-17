@@ -57,6 +57,7 @@ export function dataSourcesInfoGet(dataSourcesId) {
  */
 export function dataSourcesDatabasesPut(data, dataSourcesId) {
   return request({
+    turnOffLoading: true,
     url: `dataSource/${dataSourcesId}`,
     method: 'PUT',
     data

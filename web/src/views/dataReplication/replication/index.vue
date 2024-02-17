@@ -9,24 +9,24 @@
     <el-main style="padding-top: 30px">
       <el-card shadow="never">
         <el-steps :active="stepsInfo.stepsActive" finish-status="success" simple>
-          <el-step title="数据源与目标"></el-step>
-          <el-step title="选择复制对象"></el-step>
-          <el-step title="配置映射对象"></el-step>
-          <el-step title="预检查"></el-step>
-          <el-step title="启动任务"></el-step>
+          <el-step title="数据源与目标" />
+          <el-step title="选择复制对象" />
+          <el-step title="配置映射对象" />
+          <el-step title="预检查" />
+          <el-step title="启动任务" />
         </el-steps>
         <div style="margin-top: 20px;margin-left: 20px">
           <data-source-and-target-assembly
-            :get-data-replication-task-info="dataReplicationTaskInfo"
             v-if="stepsInfo.stepsActive===0"
+            :get-data-replication-task-info="dataReplicationTaskInfo"
           />
           <select-copy-object-component
-            :get-data-replication-task-info="dataReplicationTaskInfo"
             v-else-if="stepsInfo.stepsActive===1"
+            :get-data-replication-task-info="dataReplicationTaskInfo"
           />
           <configure-mapping-objects
-            :get-data-replication-task-info="dataReplicationTaskInfo"
             v-else-if="stepsInfo.stepsActive===2"
+            :get-data-replication-task-info="dataReplicationTaskInfo"
           />
         </div>
       </el-card>
@@ -43,13 +43,6 @@ import ConfigureMappingObjects from '@/views/dataReplication/replication/edit/co
 export default {
   name: 'DataReplicationEdit',
   components: { ConfigureMappingObjects, SelectCopyObjectComponent, dataSourceAndTargetAssembly },
-  watch: {
-    $route(to, from) {
-      // 监听路由是否变化
-      this.stepsInfo.stepsActive = Number(this.$route.query.stepsActive) || 0
-      this.stepsInfo.taskID = Number(this.$route.query.taskID) || 0
-    }
-  },
   data() {
     return {
       stepsInfo: {
@@ -58,12 +51,18 @@ export default {
       },
       dataReplicationTaskInfo: {
         taskName: '',
-        sourceDataSource: '',
-        targetDataSource: '',
+        sourceDataSourceID: '',
+        targetDataSourceID: '',
         copyMethod: 0,
-        copyType: [0, 1],
-        editingSteps: 1
+        sameNameOperation: 0
       }
+    }
+  },
+  watch: {
+    $route(to, from) {
+      // 监听路由是否变化
+      this.stepsInfo.stepsActive = Number(this.$route.query.stepsActive) || 0
+      this.stepsInfo.taskID = Number(this.$route.query.taskID) || 0
     }
   },
   mounted() {
